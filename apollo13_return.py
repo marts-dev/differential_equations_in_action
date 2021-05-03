@@ -7,7 +7,9 @@
 #
 
 import math
-import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib as mplt
+import numpy
 
 earth_mass = 5.97e24  # kg
 earth_radius = 6.378e6  # m (at equator)
@@ -48,7 +50,7 @@ def acceleration(time, position):
     return acc
 
 
-axes = matplotlib.pyplot.gca()
+axes = plt.gca()
 axes.set_xlabel("Longitudinal position in m")
 axes.set_ylabel("Lateral position in m")
 
@@ -121,22 +123,21 @@ def apply_boost():
 position, velocity, current_time, boost = apply_boost()
 
 
-@show_plot
 def plot_path(position_list, times_list):
-    axes = matplotlib.pyplot.gca()
+    axes = plt.gca()
     axes.set_xlabel("Longitudinal position in m")
     axes.set_ylabel("Lateral position in m")
     previous_marker_number = -1
     for position, current_time in zip(position_list, times_list):
         if current_time >= marker_time * previous_marker_number:
             previous_marker_number += 1
-            matplotlib.pyplot.scatter(
+            plt.scatter(
                 position[0], position[1], s=2.0, facecolor="r", edgecolor="none"
             )
             moon_pos = moon_position(current_time)
             if numpy.linalg.norm(position - moon_pos) < 30.0 * moon_radius:
                 axes.add_line(
-                    matplotlib.lines.Line2D(
+                    mplt.lines.Line2D(
                         [position[0], moon_pos[0]],
                         [position[1], moon_pos[1]],
                         alpha=0.3,
@@ -144,19 +145,20 @@ def plot_path(position_list, times_list):
                     )
                 )
     axes.add_patch(
-        matplotlib.patches.CirclePolygon(
+        mplt.patches.CirclePolygon(
             (0.0, 0.0), earth_radius, facecolor="none", edgecolor="b"
         )
     )
     for i in range(int(total_duration / marker_time)):
         moon_pos = moon_position(i * marker_time)
         axes.add_patch(
-            matplotlib.patches.CirclePolygon(
+            mplt.patches.CirclePolygon(
                 moon_pos, moon_radius, facecolor="none", edgecolor="g", alpha=0.7
             )
         )
 
-    matplotlib.pyplot.axis("equal")
+    plt.axis("equal")
+    plt.show()
 
 
 plot_path(position, current_time)
